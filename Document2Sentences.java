@@ -33,16 +33,19 @@ import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;  
   
 //javac -cp .:* Document2Sentences.java 
-//java -cp .:* Document2Sentences
+//java -cp .:* Document2Sentences fileName outputDir
+// mkdir outputDir before run the script
 public class Document2Sentences {  
     public static void main(String[] args) throws IOException{  
-
+        String inputFile = args[0];
+        String outputFolder = args[1];
+        String basenameFile = Paths.get(inputFile).getFileName().toString();
           
         Properties props = new Properties();      
         props.put("annotators", "tokenize, cleanxml, ssplit");      
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);    
 
-        byte[] encoded = Files.readAllBytes(Paths.get("00504"));
+        byte[] encoded = Files.readAllBytes(Paths.get(inputFile));
         
 
         String text = new String(encoded, StandardCharsets.UTF_8);
@@ -60,7 +63,7 @@ public class Document2Sentences {
         for(CoreMap sentence: sentences) { 
             
 
-            PrintWriter writer = new PrintWriter("00504."+count, "UTF-8");
+            PrintWriter writer = new PrintWriter(outputFolder + basenameFile+"."+count, "UTF-8");
             
             writer.println(sentence);
             writer.close();  
