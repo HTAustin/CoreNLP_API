@@ -4,7 +4,15 @@
 */  
 import java.util.List;  
 import java.util.Map;  
-import java.util.Properties;  
+import java.util.Properties;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
+import java.nio.charset.StandardCharsets;
+import java.io.PrintWriter;
+
   
 import edu.stanford.nlp.dcoref.CorefChain;  
 import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;  
@@ -27,24 +35,36 @@ import edu.stanford.nlp.util.CoreMap;
 //javac -cp .:* Document2Sentences.java 
 //java -cp .:* Document2Sentences
 public class Document2Sentences {  
-    public static void main(String[] args) {  
+    public static void main(String[] args) throws IOException{  
 
           
         Properties props = new Properties();      
         props.put("annotators", "tokenize, cleanxml, ssplit");      
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);    
-          
-        String text = "add your text here! It can contain multiple sentences.";              
-          
+
+        byte[] encoded = Files.readAllBytes(Paths.get("00504"));
+        
+
+        String text = new String(encoded, StandardCharsets.UTF_8);
+
         Annotation document = new Annotation(text);     
         pipeline.annotate(document);                     
           
  
         List<CoreMap> sentences = document.get(SentencesAnnotation.class);  
         // System.out.println("word\tpos\tlemma\tner");  
-          
-        for(CoreMap sentence: sentences) {  
-            System.out.println(sentence);    
+        
+        int count = 0;
+        
+
+        for(CoreMap sentence: sentences) { 
+            
+
+            PrintWriter writer = new PrintWriter("00504."+count, "UTF-8");
+            
+            writer.println(sentence);
+            writer.close();  
+            count++;
               
 
         }  
